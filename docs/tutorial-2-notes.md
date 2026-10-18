@@ -1,4 +1,4 @@
-# Tutorial 2 notes
+# Week 3 - Tutorial 2
 
 ## Product experiments
 
