@@ -37,6 +37,35 @@ class Tutorial2ApiTests {
         assertEquals(7, getJson("/products/7").get("id").asLong());
     }
 
+    @Test
+    void customerReturnsANestedAddress() throws Exception {
+        JsonNode customer = getJson("/customers/1");
+        assertEquals(4, customer.size());
+        assertEquals(1, customer.get("id").asLong());
+        assertEquals("Ada Lovelace", customer.get("name").asString());
+        assertEquals("ada@example.com", customer.get("email").asString());
+
+        JsonNode address = customer.get("address");
+        assertEquals(3, address.size());
+        assertEquals("115 New Cavendish Street", address.get("street").asString());
+        assertEquals("London", address.get("city").asString());
+        assertEquals("W1W 6UW", address.get("postcode").asString());
+    }
+
+    @Test
+    void customerUsesTheIdFromThePath() throws Exception {
+        assertEquals(7, getJson("/customers/7").get("id").asLong());
+    }
+
+    @Test
+    void swaggerListsBothEndpoints() throws Exception {
+        JsonNode paths = getJson("/v3/api-docs").get("paths");
+        assertTrue(paths.has("/products/{id}"));
+        assertTrue(paths.has("/customers/{id}"));
+        assertTrue(paths.has("/hello"));
+        assertTrue(paths.has("/goodbye"));
+    }
+
     private JsonNode getJson(String path) throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:" + port + path))
