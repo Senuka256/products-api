@@ -25,16 +25,21 @@ class Tutorial2ApiTests {
 
     @Test
     void productReturnsAllFields() throws Exception {
-        JsonNode product = getJson("/products/1");
+        JsonNode created = createProduct();
+        JsonNode product = getJson("/products/" + created.get("id").asLong());
         assertEquals(3, product.size());
-        assertEquals(1, product.get("id").asLong());
+        assertEquals(created.get("id").asLong(), product.get("id").asLong());
         assertEquals("Laptop", product.get("name").asString());
         assertEquals(999.99, product.get("price").asDouble());
     }
 
     @Test
     void productUsesTheIdFromThePath() throws Exception {
-        assertEquals(7, getJson("/products/7").get("id").asLong());
+        JsonNode first = createProduct();
+        JsonNode second = createProduct();
+        long id = second.get("id").asLong();
+        assertNotEquals(first.get("id").asLong(), id);
+        assertEquals(id, getJson("/products/" + id).get("id").asLong());
     }
 
     @Test
@@ -64,6 +69,18 @@ class Tutorial2ApiTests {
         assertTrue(paths.has("/customers/{id}"));
         assertTrue(paths.has("/hello"));
         assertTrue(paths.has("/goodbye"));
+    }
+
+    private JsonNode createProduct() throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:" + port + "/products"))
+                .timeout(Duration.ofSeconds(10))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString("{\"name\":\"Laptop\",\"price\":999.99}"))
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, response.statusCode(), response.body());
+        return mapper.readTree(response.body());
     }
 
     private JsonNode getJson(String path) throws Exception {
