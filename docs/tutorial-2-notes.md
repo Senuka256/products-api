@@ -2,10 +2,10 @@
 
 ## Product experiments
 
-Before changing the fields to private, the prediction was that Jackson would no
-longer be able to read them and the JSON would be empty.
+Prediction: making the fields private without adding getters should give empty
+JSON because Jackson cannot read the fields directly.
 
-HTTP checks confirmed these responses for `/products/1`:
+Results from `/products/1`:
 
 | Product version | Status | Response |
 | --- | --- | --- |
@@ -14,35 +14,35 @@ HTTP checks confirmed these responses for `/products/1`:
 | Private fields with getters | 200 | `{"id":1,"name":"Laptop","price":999.99}` |
 | `getName()` commented out | 200 | `{"id":1,"price":999.99}` |
 
-Jackson uses the public getters to read the private fields, so removing
-`getName()` hides the name but leaves the other properties available.
+With private fields, Jackson reads the values through the public getters.
+Without `getName()`, name disappears but id and price still show up.
 
-To catch this in a larger class, check the response fields against the expected
-JSON rather than relying on a 200 status or looking for an error log.
+A 200 response does not mean every field is there. For a bigger class, compare
+the JSON fields with what the endpoint should return.
 
-The getter was restored after the experiment.
+`getName()` is restored in the final code.
 
 ## Customer and Address
 
-`/customers/1` returns Ada Lovelace with an Address containing street, city and
-postcode. The address is an object inside the customer JSON, not a string.
+`/customers/1` returns Ada Lovelace. The address sits inside the customer JSON
+and has its own street, city and postcode fields.
 
-Commenting out `getAddress()` removed the entire address block. The response
-still had id, name and email, with status 200. Restoring the getter brought back
-the nested address and all three of its fields.
+Commenting out `getAddress()` removed the whole address. The id, name and email
+were still there, and the status was still 200. Restoring the getter brought
+the address back.
 
-Both controllers use the id from the URL. They return fixed example data for
-the other fields, as required for this tutorial.
+Both endpoints take the id from the URL. The other values are the sample data
+from the lab guide.
 
 ## UML diagrams
 
 - [Product](uml/Product.png) ([editable source](uml/Product.puml))
 - [Customer and Address](uml/CustomerAddress.png) ([editable source](uml/CustomerAddress.puml))
 
-The arrow points from Customer to Address because a Customer has an Address.
+Customer has an Address, so the arrow points from Customer to Address.
 
-## Running the checks
+## Run the tests
 
 Use Java 25, then run `mvnw.cmd test` on Windows or `./mvnw test` on macOS/Linux.
-The endpoint tests start the application on an available port and check the JSON
-fields, URL ids and Swagger paths.
+The tests check the JSON fields, ids from the URL and the endpoints listed in
+Swagger. They start the app on a free port.
