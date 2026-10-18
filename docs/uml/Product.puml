@@ -1,4 +1,22 @@
 @startuml
+left to right direction
+class ProductController {
+    - productService : ProductService
+    + getAllProducts() : List<Product>
+    + getProductById(id : Long) : Product
+    + addProduct(product : Product) : Product
+    + deleteProduct(id : Long) : void
+    + search(name : String) : List<Product>
+}
+class ProductService {
+    - products : List<Product>
+    - nextId : Long
+    + getAllProducts() : List<Product>
+    + getProductById(id : Long) : Optional<Product>
+    + addProduct(product : Product) : Product
+    + deleteProduct(id : Long) : void
+    + findByName(name : String) : List<Product>
+}
 class Product {
     - id : Long
     - name : String
@@ -6,7 +24,12 @@ class Product {
     + Product()
     + Product(id : Long, name : String, price : double)
     + getId() : Long
+    + setId(id : Long) : void
     + getName() : String
+    + setName(name : String) : void
     + getPrice() : double
+    + setPrice(price : double) : void
 }
+ProductController ..> ProductService
+ProductService --> Product
 @enduml

@@ -1,0 +1,331 @@
+{
+  "info": {
+    "name": "Week 4 - Tutorial 3",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Restart the app before running this collection in order. The catalogue must start empty. Missing products intentionally return 200 with an empty body for this lab."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    }
+  ],
+  "item": [
+    {
+      "name": "Start with an empty catalogue",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/products"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"Response matches the lab result\", function () { pm.expect(pm.response.json()).to.eql([]); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Add Laptop",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/products",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Laptop\",\n  \"price\": 899.99\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"Response matches the lab result\", function () { pm.expect(pm.response.json()).to.eql({\"id\": 1, \"name\": \"Laptop\", \"price\": 899.99}); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Add Mouse",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/products",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Mouse\",\n  \"price\": 24.99\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"Response matches the lab result\", function () { pm.expect(pm.response.json()).to.eql({\"id\": 2, \"name\": \"Mouse\", \"price\": 24.99}); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "List both products",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/products"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"Response matches the lab result\", function () { pm.expect(pm.response.json()).to.eql([{\"id\": 1, \"name\": \"Laptop\", \"price\": 899.99}, {\"id\": 2, \"name\": \"Mouse\", \"price\": 24.99}]); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Find Laptop by id",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/products/1"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"Response matches the lab result\", function () { pm.expect(pm.response.json()).to.eql({\"id\": 1, \"name\": \"Laptop\", \"price\": 899.99}); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Delete Laptop",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "{{baseUrl}}/products/1"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"Response matches the lab result\", function () { pm.expect(pm.response.text()).to.eql(\"\"); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Only Mouse remains",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/products"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"Response matches the lab result\", function () { pm.expect(pm.response.json()).to.eql([{\"id\": 2, \"name\": \"Mouse\", \"price\": 24.99}]); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Missing product experiment",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/products/99"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"Response matches the lab result\", function () { pm.expect(pm.response.text()).to.eql(\"\"); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Service replaces a supplied id",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/products",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": 999,\n  \"name\": \"Laptop stand\",\n  \"price\": 49.99\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"Response matches the lab result\", function () { pm.expect(pm.response.json()).to.eql({\"id\": 3, \"name\": \"Laptop stand\", \"price\": 49.99}); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Add Laptop case",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/products",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Laptop case\",\n  \"price\": 19.99\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"Response matches the lab result\", function () { pm.expect(pm.response.json()).to.eql({\"id\": 4, \"name\": \"Laptop case\", \"price\": 19.99}); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Search by partial name",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/products/search?name=Lap"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"Response matches the lab result\", function () { pm.expect(pm.response.json()).to.eql([{\"id\": 3, \"name\": \"Laptop stand\", \"price\": 49.99}, {\"id\": 4, \"name\": \"Laptop case\", \"price\": 19.99}]); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Search with no matches",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/products/search?name=Keyboard"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"Response matches the lab result\", function () { pm.expect(pm.response.json()).to.eql([]); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Search is case sensitive",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/products/search?name=lap"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", function () { pm.response.to.have.status(200); });",
+              "pm.test(\"Response matches the lab result\", function () { pm.expect(pm.response.json()).to.eql([]); });"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
