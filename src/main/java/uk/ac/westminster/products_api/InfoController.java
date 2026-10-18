@@ -8,6 +8,6 @@ public class InfoController {
 
     @GetMapping("/info")
     public String info() {
-        return "Products API - Object Oriented Programming tutorial project.";
+        return "Products API for the OOP tutorials.";
     }
 }
